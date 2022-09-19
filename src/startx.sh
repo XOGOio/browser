@@ -36,6 +36,33 @@ else
   echo "Window size set by environment variable to $WINDOW_SIZE"
 fi
 
+# cap window size at 1920,1080
+winDims=(${WINDOW_SIZE//,/ })
+
+if [[ winDims[0] > 1920 ]]; then
+    width=1920
+
+    multiplier=1920/${winDims[0]}
+
+    height=$((${winDims[1]}*$multiplier))
+
+    winDims=($width $height)
+fi
+
+if [[ winDims[1] > 1080 ]]; then
+    height=1080
+
+    multiplier=1080/${winDims[1]}
+
+    width=$((${winDims[0]}*$multiplier))
+
+    winDims=($width $height)
+fi
+
+WINDOW_SIZE=${winDims[0]},${winDims[1]}
+
+echo "Window size capped to $WINDOW_SIZE"
+
 # rotate screen if env variable is set [normal, inverted, left or right]
 if [[ ! -z "$ROTATE_DISPLAY" ]]; then
   sleep 3 && xrandr -o $ROTATE_DISPLAY
